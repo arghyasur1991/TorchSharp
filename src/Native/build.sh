@@ -44,7 +44,7 @@ while [ "$1" != "" ]; do
         --configuration)
             shift
             __configuration=$1
-            ;;          
+            ;;
         --stripsymbols)
             __strip_argument="-DSTRIP_SYMBOLS=true"
             ;;
@@ -59,7 +59,7 @@ while [ "$1" != "" ]; do
 done
 
 # Force the build to be release since libtorch is in release.
-__cmake_defines="-DCMAKE_BUILD_TYPE=${__configuration} ${__strip_argument} -DLIBTORCH_PATH=${__libtorchpath}"
+__cmake_defines="-DCMAKE_BUILD_TYPE=${__configuration} ${__strip_argument} -DLIBTORCH_PATH=${__libtorchpath} -DCMAKE_OSX_ARCHITECTURES=x86_64"
 
 __IntermediatesDir="$__baseIntermediateOutputPath/$__build_arch.$__configuration/Native"
 __BinDir="$__rootBinPath/$__build_arch.$__configuration/Native"
@@ -98,7 +98,7 @@ fi
 OSName=$(uname -s)
 case $OSName in
     Darwin)
-        
+
         # PyTorch is specifyin options that require OpenMP support but AppleClang's  OpenMP support is lacking e.g. -fopenmp not supported
         # See    https://github.com/oneapi-src/oneDNN/issues/591 for this potential workaround, though it may be better
         # to switch to brew clang.
