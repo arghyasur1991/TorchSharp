@@ -197,7 +197,7 @@ namespace TorchSharp
                     if (!ok) {
                         var message = $"This application or script uses TorchSharp but doesn't contain a reference to {(useCudaBackend ? cudaRootPackage : cpuRootPackage)}, Version={libtorchPackageVersion}.\n\nConsider referencing one of the combination packages TorchSharp-cpu, TorchSharp-cuda-linux, TorchSharp-cuda-windows or call System.Runtime.InteropServices.NativeLibrary.Load(path-to-{target}) explicitly for a Python install of pytorch. See https://github.com/dotnet/TorchSharp/issues/169.\".\n\nFor CUDA, you may need to call 'TorchSharp.torch.InitializeDeviceType(TorchSharp.DeviceType.CUDA)' before any use of TorchSharp CUDA packages from scripts or notebooks.\n\nTrace from LoadNativeBackend:\n{trace}";
                         Console.WriteLine(message);
-                        throw new NotSupportedException(message);
+                        // throw new NotSupportedException(message);
                     }
                 }
 
