@@ -75,7 +75,7 @@ namespace TorchSharp
 
         private static void LoadNativeBackend(bool useCudaBackend, out StringBuilder trace)
         {
-
+            nativeBackendLoaded = true;
             var alreadyLoaded = useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded;
             trace = null;
             if (!alreadyLoaded) {
