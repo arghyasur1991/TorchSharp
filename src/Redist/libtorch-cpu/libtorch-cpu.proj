@@ -39,10 +39,10 @@
   <ItemGroup Condition="'$(TargetOS)' == 'mac'">
     <File Include="libtorch\lib\libbackend_with_compiler.dylib" />
     <File Include="libtorch\lib\libc10.dylib" />
-    <File Include="libtorch\lib\libfbjni.dylib" />
-    <File Include="libtorch\lib\libiomp5.dylib" />
+    <!--File Include="libtorch\lib\libfbjni.dylib" /-->
+    <!--File Include="libtorch\lib\libiomp5.dylib" /-->
     <File Include="libtorch\lib\libjitbackend_test.dylib" />
-    <File Include="libtorch\lib\libpytorch_jni.dylib" />
+    <!--File Include="libtorch\lib\libpytorch_jni.dylib" /-->
     <File Include="libtorch\lib\libshm.dylib" />
     <File Include="libtorch\lib\libtorch.dylib" />
     <File Include="libtorch\lib\libtorch_cpu.dylib" />

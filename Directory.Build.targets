@@ -8,7 +8,7 @@
   </ItemGroup>
 
   <!-- Windows CPU libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true') and '$(SkipNative)' != 'true' ">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' != 'true' or '$(SkipCuda)' == 'true') and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="asmjit" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbgemm" />
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <!-- Windows CUDA 11.3 libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true') and '$(SkipNative)' != 'true' ">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and '$(OS)' == 'Windows_NT' and '$(TestUsesLibTorch)' == 'true' and ('$(TestCuda)' == 'true' and '$(SkipCuda)' != 'true') and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" Variant="cuda\" />
     <NativeAssemblyReference Include="asmjit" Variant="cuda\" />
     <NativeAssemblyReference Include="c10_cuda" Variant="cuda\" />
@@ -58,7 +58,7 @@
   </ItemGroup>
 
   <!-- Mac libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64'and $([MSBuild]::IsOSPlatform('osx')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbjni" />
     <NativeAssemblyReference Include="iomp5" />
@@ -73,7 +73,7 @@
   </ItemGroup>
 
   <!-- Linux CPU libtorch binary list used for examples and testing -->
-  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'x64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
+  <ItemGroup Condition="'$(NativeTargetArchitecture)' == 'arm64' and $([MSBuild]::IsOSPlatform('linux')) and '$(TestUsesLibTorch)' == 'true'  and '$(SkipNative)' != 'true' ">
     <NativeAssemblyReference Include="backend_with_compiler" />
     <NativeAssemblyReference Include="c10" />
     <NativeAssemblyReference Include="fbjni" />

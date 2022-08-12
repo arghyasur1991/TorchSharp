@@ -22,6 +22,7 @@ if /i [%1] == [Debug]       ( set CMAKE_BUILD_TYPE=Debug&&shift&goto Arg_Loop)
 
 if /i [%1] == [x86]         ( set __BuildArch=x86&&set __VCBuildArch=x86&&shift&goto Arg_Loop)
 if /i [%1] == [x64]         ( set __BuildArch=x64&&set __VCBuildArch=x86_amd64&&shift&goto Arg_Loop)
+if /i [%1] == [arm64]         ( set __BuildArch=arm64&&set __VCBuildArch=x86_amd64&&shift&goto Arg_Loop)
 if /i [%1] == [amd64]       ( set __BuildArch=x64&&set __VCBuildArch=x86_amd64&&shift&goto Arg_Loop)
 
 if /i [%1] == [--libtorchpath] ( set LIBTORCH_PATH=%2&&shift&goto Arg_Loop)

@@ -7,8 +7,8 @@
   <PropertyGroup>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <Configurations>Debug;Release</Configurations>
-    <Platform Condition="'$(Platform)'==''">x64</Platform>
-    <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">x64</TargetArchitecture>
+    <Platform Condition="'$(Platform)'==''">arm64</Platform>
+    <TargetArchitecture Condition="'$(TargetArchitecture)' == ''">arm64</TargetArchitecture>
     <NativeTargetArchitecture Condition="'$(NativeTargetArchitecture)' == ''">$(TargetArchitecture)</NativeTargetArchitecture>
     <PlatformConfig>$(Platform).$(Configuration)</PlatformConfig>
   </PropertyGroup>
