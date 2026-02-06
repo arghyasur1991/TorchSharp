@@ -53,6 +53,15 @@ namespace TorchSharp
         static bool nativeBackendLoaded = false;
         static bool nativeBackendCudaLoaded = false;
 
+        /// <summary>
+        /// Set this to true before any TorchSharp API call if you have pre-loaded
+        /// the native libtorch and LibTorchSharp libraries via dlopen or equivalent.
+        /// This skips TorchSharp's built-in native library discovery which may fail
+        /// in environments like Unity on macOS where NativeLibrary.TryLoad is not
+        /// supported and the NuGet package directory structure doesn't exist.
+        /// </summary>
+        public static bool NativeBackendPreloaded { get; set; } = false;
+
         public static string __version__ => libtorchPackageVersion;
         public static string NormalizeNuGetVersion(string versionString)
         {
@@ -112,6 +121,16 @@ namespace TorchSharp
 
             var alreadyLoaded = useCudaBackend ? nativeBackendCudaLoaded : nativeBackendLoaded;
             trace = null;
+
+            // If native libraries were pre-loaded externally (e.g. via dlopen in Unity),
+            // skip the discovery/loading logic entirely.
+            if (NativeBackendPreloaded && !alreadyLoaded) {
+                if (useCudaBackend)
+                    nativeBackendCudaLoaded = true;
+                else
+                    nativeBackendLoaded = true;
+                return;
+            }
 
             if (!alreadyLoaded) {
                 bool ok;
