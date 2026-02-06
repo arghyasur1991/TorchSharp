@@ -54,13 +54,19 @@ namespace TorchSharp
         static bool nativeBackendCudaLoaded = false;
 
         /// <summary>
-        /// Set this to true before any TorchSharp API call if you have pre-loaded
+        /// Returns true if the environment variable TORCHSHARP_NATIVE_PRELOADED is set to "1".
+        /// Set this env var before any TorchSharp API call if you have pre-loaded
         /// the native libtorch and LibTorchSharp libraries via dlopen or equivalent.
         /// This skips TorchSharp's built-in native library discovery which may fail
         /// in environments like Unity on macOS where NativeLibrary.TryLoad is not
         /// supported and the NuGet package directory structure doesn't exist.
+        ///
+        /// Using an environment variable avoids the chicken-and-egg problem where
+        /// accessing a static property on torch triggers the static constructor
+        /// before the flag can be set.
         /// </summary>
-        public static bool NativeBackendPreloaded { get; set; } = false;
+        public static bool NativeBackendPreloaded =>
+            System.Environment.GetEnvironmentVariable("TORCHSHARP_NATIVE_PRELOADED") == "1";
 
         public static string __version__ => libtorchPackageVersion;
         public static string NormalizeNuGetVersion(string versionString)
