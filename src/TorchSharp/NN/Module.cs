@@ -593,7 +593,7 @@ namespace TorchSharp
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSNN_Module_get_named_parameters(handle, pa.CreateArray, sa.CreateArray);
+                    THSNN_Module_get_named_parameters(handle, pa.Allocator, sa.Allocator);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
@@ -605,7 +605,7 @@ namespace TorchSharp
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSNN_Module_get_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                    THSNN_Module_get_named_buffers(handle, pa.Allocator, sa.Allocator);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
@@ -644,8 +644,7 @@ namespace TorchSharp
                     IntPtr[] ptrArray;
 
                     using (var pa = new PinnedArray<IntPtr>()) {
-                        AllocatePinnedArray allocator = pa.CreateArray;
-                        THSNN_Module_get_parameters(handle, allocator, recurse);
+                        THSNN_Module_get_parameters(handle, pa.Allocator, recurse);
                         CheckForErrors();
                         ptrArray = pa.Array;
                     }
@@ -1066,22 +1065,16 @@ namespace TorchSharp
                 {
                     this.name = name;
 
-                    IntPtr ForwardNative(IntPtr t)
-                    {
-                        var input = new Tensor(t);
-                        var output = ((nn.Module<Tensor, Tensor>)this).call(input);
+                    // Use IL2CPP-safe static trampoline instead of instance-capturing
+                    // local function.  IL2CPP cannot marshal instance-method delegates
+                    // to native code.
+                    _forwardSlotId = IL2CPPBridge.AcquireFwdSlot(this);
+                    var fwdDelegate = IL2CPPBridge.FwdDelegates[_forwardSlotId];
 
-                        // handles must live on - we don't own them, but
-                        // the managed objects should go away.
-                        input.DecoupleFromNativeHandle();
-
-                        return output.DecoupleFromNativeHandle();
-                    }
-
-                    var res = THSNN_custom_module(name, ForwardNative, out var boxedHandle);
+                    var res = THSNN_custom_module(name, fwdDelegate, out var boxedHandle);
                     CheckForErrors();
                     handle = new HType(res, true);
-                    this._forwardNative = ForwardNative;
+                    this._forwardNative = fwdDelegate;
                     boxedModule = new BoxedModule(boxedHandle);
 
                     _init_parameters();
@@ -1154,6 +1147,7 @@ namespace TorchSharp
 
                 /// Keeps the callback delegate alive
                 private ForwardFunctionC? _forwardNative;
+                private int _forwardSlotId = -1;
                 protected string? name;
             }
 

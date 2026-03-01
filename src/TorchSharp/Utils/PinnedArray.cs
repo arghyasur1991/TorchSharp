@@ -14,6 +14,7 @@ namespace TorchSharp
     internal sealed class PinnedArray<T> : IDisposable where T : struct
     {
         private GCHandle handle;
+        private int _callbackSlot = -1;
 
         public T[] Array { get; private set; }
 
@@ -52,6 +53,21 @@ namespace TorchSharp
             return handle.AddrOfPinnedObject();
         }
 
+        /// <summary>
+        /// IL2CPP-safe delegate backed by a static method.
+        /// Acquires a slot from the global pool on first access;
+        /// the slot is released on Dispose().
+        /// </summary>
+        public AllocatePinnedArray Allocator
+        {
+            get
+            {
+                if (_callbackSlot < 0)
+                    _callbackSlot = IL2CPPBridge.AcquireAllocSlot(new Func<IntPtr, IntPtr>(CreateArray));
+                return IL2CPPBridge.AllocDelegates[_callbackSlot];
+            }
+        }
+
         public void Dispose()
         {
             if (Array != null) {
@@ -59,11 +75,19 @@ namespace TorchSharp
                     (val as IDisposable)?.Dispose();
                 }
             }
+            if (_callbackSlot >= 0) {
+                IL2CPPBridge.ReleaseAllocSlot(_callbackSlot);
+                _callbackSlot = -1;
+            }
             FreeHandle();
         }
 
         ~PinnedArray()
         {
+            if (_callbackSlot >= 0) {
+                IL2CPPBridge.ReleaseAllocSlot(_callbackSlot);
+                _callbackSlot = -1;
+            }
             FreeHandle();
         }
 

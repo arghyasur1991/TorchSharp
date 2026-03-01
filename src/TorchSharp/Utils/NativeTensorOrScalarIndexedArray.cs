@@ -21,6 +21,7 @@ namespace TorchSharp
         private List<int> sizes = new List<int>();
 
         private int _allocated = 0;
+        private int _callbackSlot = -1;
 
         public int Count {
             get { return arrays.Count; }
@@ -79,13 +80,37 @@ namespace TorchSharp
             return CreateArray(index, (int)length);
         }
 
+        /// <summary>
+        /// IL2CPP-safe delegate backed by a static method.
+        /// </summary>
+        public AllocateIndexedNativeTensorOrScalarArray Allocator
+        {
+            get
+            {
+                if (_callbackSlot < 0)
+                    _callbackSlot = IL2CPPBridge.AcquireIdxAllocSlot(
+                        new Func<int, IntPtr, IntPtr>(CreateArray));
+                return IL2CPPBridge.IdxAllocDelegates[_callbackSlot];
+            }
+        }
+
         public void Dispose()
         {
+            if (_callbackSlot >= 0)
+            {
+                IL2CPPBridge.ReleaseIdxAllocSlot(_callbackSlot);
+                _callbackSlot = -1;
+            }
             FreeHandles();
         }
 
         ~NativeTensorOrScalarIndexedArray()
         {
+            if (_callbackSlot >= 0)
+            {
+                IL2CPPBridge.ReleaseIdxAllocSlot(_callbackSlot);
+                _callbackSlot = -1;
+            }
             FreeHandles();
         }
 

@@ -155,12 +155,7 @@ namespace TorchSharp
             var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
             var dataArrayAddr = dataHandle.AddrOfPinnedObject();
             var gchp = GCHandle.ToIntPtr(dataHandle);
-            TorchSharp.PInvoke.GCHandleDeleter deleter = null!;
-            deleter = new TorchSharp.PInvoke.GCHandleDeleter((IntPtr ptr) => {
-                GCHandle.FromIntPtr(gchp).Free();
-                deleters.TryRemove(deleter, out deleter!);
-            });
-            deleters.TryAdd(deleter, deleter); // keep the delegate alive
+            IL2CPPBridge.RegisterDeleter(dataArrayAddr, () => GCHandle.FromIntPtr(gchp).Free());
 
             dtype = dtype.HasValue ? dtype : (ScalarType)origType;
 
@@ -169,12 +164,12 @@ namespace TorchSharp
                 IntPtr iPtr = (IntPtr)ptr;
 
                 fixed (long* shape = dimensions) {
-                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_new(dataArrayAddr, IL2CPPBridge.DeleterDelegate, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
 
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_new(dataArrayAddr, IL2CPPBridge.DeleterDelegate, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
                     }
 
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
@@ -217,23 +212,18 @@ namespace TorchSharp
                 var dataHandle = rawArray.Pin();
                 var dataArrayAddr = (IntPtr)dataHandle.Pointer;
 
-                TorchSharp.PInvoke.GCHandleDeleter deleter = null!;
-                deleter = new TorchSharp.PInvoke.GCHandleDeleter((IntPtr ptr) => {
-                    dataHandle.Dispose();
-                    deleters.TryRemove(deleter, out deleter!);
-                });
-                deleters.TryAdd(deleter, deleter); // keep the delegate alive
+                IL2CPPBridge.RegisterDeleter(dataArrayAddr, () => dataHandle.Dispose());
 
                 void *ptr = null;
                 IntPtr iPtr = (IntPtr)ptr;
 
                 fixed (long* shape = dimensions) {
-                    var handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                    var handle = THSTensor_new(dataArrayAddr, IL2CPPBridge.DeleterDelegate, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
 
                     if (handle == IntPtr.Zero) {
                         GC.Collect();
                         GC.WaitForPendingFinalizers();
-                        handle = THSTensor_new(dataArrayAddr, deleter, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
+                        handle = THSTensor_new(dataArrayAddr, IL2CPPBridge.DeleterDelegate, (IntPtr)shape, dimensions.Length, origType, (sbyte)dtype.Value, (int)device.type, device.index, requires_grad);
                     }
 
                     if (handle == IntPtr.Zero) { CheckForErrors(); }
@@ -392,20 +382,15 @@ namespace TorchSharp
             var dataHandle = GCHandle.Alloc(rawArray, GCHandleType.Pinned);
             var dataArrayAddr = dataHandle.AddrOfPinnedObject();
             var gchp = GCHandle.ToIntPtr(dataHandle);
-            TorchSharp.PInvoke.GCHandleDeleter deleter = null!;
-            deleter = new TorchSharp.PInvoke.GCHandleDeleter((IntPtr ptr) => {
-                GCHandle.FromIntPtr(gchp).Free();
-                deleters.TryRemove(deleter, out deleter!);
-            });
-            deleters.TryAdd(deleter, deleter); // keep the delegate alive
+            IL2CPPBridge.RegisterDeleter(dataArrayAddr, () => GCHandle.FromIntPtr(gchp).Free());
 
             unsafe {
-                var handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                var handle = THSTensor_frombuffer(dataArrayAddr, IL2CPPBridge.DeleterDelegate, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, requires_grad);
 
                 if (handle == IntPtr.Zero) {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
-                    handle = THSTensor_frombuffer(dataArrayAddr, deleter, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, requires_grad);
+                    handle = THSTensor_frombuffer(dataArrayAddr, IL2CPPBridge.DeleterDelegate, count, offset, (sbyte)origType, (sbyte)dtype, (int)device.type, device.index, requires_grad);
                 }
 
                 if (handle == IntPtr.Zero) { CheckForErrors(); }
