@@ -111,7 +111,14 @@ namespace TorchSharp
                     }
                 }
 
-                ~Module() => Dispose(false);
+                ~Module()
+                {
+                    if (_forwardSlotId >= 0) {
+                        IL2CPPBridge.ReleaseFwdSlot(_forwardSlotId);
+                        _forwardSlotId = -1;
+                    }
+                    Dispose(false);
+                }
 
                 /// <summary>
                 /// Releases the storage.
@@ -127,6 +134,11 @@ namespace TorchSharp
                 /// </summary>
                 protected virtual void Dispose(bool disposing)
                 {
+                    if (_forwardSlotId >= 0) {
+                        IL2CPPBridge.ReleaseFwdSlot(_forwardSlotId);
+                        _forwardSlotId = -1;
+                    }
+
                     if (disposing && !handle.IsInvalid) {
 
                         foreach (var (_, p) in named_buffers(false)) {

@@ -95,20 +95,38 @@ namespace TorchSharp
         //  Custom Module Forward Trampolines
         // ═══════════════════════════════════════════════════════════════════
         //  Forward callbacks are stored by native CustomModule and invoked
-        //  later (not synchronously), so we need per-module static methods.
+        //  later, so each module needs a unique static function pointer.
+        //  Pool is recyclable: slots are released when modules are disposed.
 
-        internal const int MaxFwdSlots = 8;
+        internal const int MaxFwdSlots = 64;
+        private static readonly object s_fwdLock = new object();
         internal static readonly torch.nn.Module[] s_fwdModules = new torch.nn.Module[MaxFwdSlots];
-        private static int s_nextFwd;
 
         internal static int AcquireFwdSlot(torch.nn.Module module)
         {
-            int slot = System.Threading.Interlocked.Increment(ref s_nextFwd) - 1;
-            if (slot >= MaxFwdSlots)
-                throw new InvalidOperationException(
-                    $"Custom nn.Module forward slot pool exhausted ({MaxFwdSlots} max).");
-            s_fwdModules[slot] = module;
-            return slot;
+            lock (s_fwdLock)
+            {
+                for (int i = 0; i < MaxFwdSlots; i++)
+                {
+                    if (s_fwdModules[i] == null)
+                    {
+                        s_fwdModules[i] = module;
+                        return i;
+                    }
+                }
+            }
+            throw new InvalidOperationException(
+                $"nn.Module forward slot pool exhausted ({MaxFwdSlots} max). " +
+                "Ensure disposed modules call Dispose() to release slots.");
+        }
+
+        internal static void ReleaseFwdSlot(int slot)
+        {
+            if (slot < 0 || slot >= MaxFwdSlots) return;
+            lock (s_fwdLock)
+            {
+                s_fwdModules[slot] = null;
+            }
         }
 
         private static IntPtr FwdDispatch(int slot, IntPtr t)
@@ -121,6 +139,7 @@ namespace TorchSharp
             return output.DecoupleFromNativeHandle();
         }
 
+        // 64 pre-defined static forward trampolines
         [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F0(IntPtr t) => FwdDispatch(0, t);
         [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F1(IntPtr t) => FwdDispatch(1, t);
         [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F2(IntPtr t) => FwdDispatch(2, t);
@@ -129,10 +148,73 @@ namespace TorchSharp
         [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F5(IntPtr t) => FwdDispatch(5, t);
         [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F6(IntPtr t) => FwdDispatch(6, t);
         [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F7(IntPtr t) => FwdDispatch(7, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F8(IntPtr t) => FwdDispatch(8, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F9(IntPtr t) => FwdDispatch(9, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F10(IntPtr t) => FwdDispatch(10, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F11(IntPtr t) => FwdDispatch(11, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F12(IntPtr t) => FwdDispatch(12, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F13(IntPtr t) => FwdDispatch(13, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F14(IntPtr t) => FwdDispatch(14, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F15(IntPtr t) => FwdDispatch(15, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F16(IntPtr t) => FwdDispatch(16, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F17(IntPtr t) => FwdDispatch(17, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F18(IntPtr t) => FwdDispatch(18, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F19(IntPtr t) => FwdDispatch(19, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F20(IntPtr t) => FwdDispatch(20, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F21(IntPtr t) => FwdDispatch(21, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F22(IntPtr t) => FwdDispatch(22, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F23(IntPtr t) => FwdDispatch(23, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F24(IntPtr t) => FwdDispatch(24, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F25(IntPtr t) => FwdDispatch(25, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F26(IntPtr t) => FwdDispatch(26, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F27(IntPtr t) => FwdDispatch(27, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F28(IntPtr t) => FwdDispatch(28, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F29(IntPtr t) => FwdDispatch(29, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F30(IntPtr t) => FwdDispatch(30, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F31(IntPtr t) => FwdDispatch(31, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F32(IntPtr t) => FwdDispatch(32, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F33(IntPtr t) => FwdDispatch(33, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F34(IntPtr t) => FwdDispatch(34, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F35(IntPtr t) => FwdDispatch(35, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F36(IntPtr t) => FwdDispatch(36, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F37(IntPtr t) => FwdDispatch(37, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F38(IntPtr t) => FwdDispatch(38, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F39(IntPtr t) => FwdDispatch(39, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F40(IntPtr t) => FwdDispatch(40, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F41(IntPtr t) => FwdDispatch(41, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F42(IntPtr t) => FwdDispatch(42, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F43(IntPtr t) => FwdDispatch(43, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F44(IntPtr t) => FwdDispatch(44, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F45(IntPtr t) => FwdDispatch(45, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F46(IntPtr t) => FwdDispatch(46, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F47(IntPtr t) => FwdDispatch(47, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F48(IntPtr t) => FwdDispatch(48, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F49(IntPtr t) => FwdDispatch(49, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F50(IntPtr t) => FwdDispatch(50, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F51(IntPtr t) => FwdDispatch(51, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F52(IntPtr t) => FwdDispatch(52, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F53(IntPtr t) => FwdDispatch(53, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F54(IntPtr t) => FwdDispatch(54, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F55(IntPtr t) => FwdDispatch(55, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F56(IntPtr t) => FwdDispatch(56, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F57(IntPtr t) => FwdDispatch(57, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F58(IntPtr t) => FwdDispatch(58, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F59(IntPtr t) => FwdDispatch(59, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F60(IntPtr t) => FwdDispatch(60, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F61(IntPtr t) => FwdDispatch(61, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F62(IntPtr t) => FwdDispatch(62, t);
+        [MonoPInvokeCallback(typeof(ForwardFunctionC))] private static IntPtr F63(IntPtr t) => FwdDispatch(63, t);
 
         internal static readonly ForwardFunctionC[] FwdDelegates =
         {
-            F0, F1, F2, F3, F4, F5, F6, F7,
+            F0,  F1,  F2,  F3,  F4,  F5,  F6,  F7,
+            F8,  F9,  F10, F11, F12, F13, F14, F15,
+            F16, F17, F18, F19, F20, F21, F22, F23,
+            F24, F25, F26, F27, F28, F29, F30, F31,
+            F32, F33, F34, F35, F36, F37, F38, F39,
+            F40, F41, F42, F43, F44, F45, F46, F47,
+            F48, F49, F50, F51, F52, F53, F54, F55,
+            F56, F57, F58, F59, F60, F61, F62, F63,
         };
 
         // ═══════════════════════════════════════════════════════════════════
