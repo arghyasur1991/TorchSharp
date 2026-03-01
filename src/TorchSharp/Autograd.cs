@@ -140,7 +140,7 @@ namespace TorchSharp
                 IntPtr gradsRef = grad_outputs == null ? IntPtr.Zero : grads.CreateArray(grad_outputs.Select(p => p.Handle).ToArray());
                 long gradsLength = grad_outputs == null ? 0 : grads.Array.Length;
 
-                THSAutograd_grad(outsRef, outs.Array.Length, insRef, ins.Array.Length, gradsRef, gradsLength, retain_graph, create_graph, allow_unused, results.CreateArray);
+                THSAutograd_grad(outsRef, outs.Array.Length, insRef, ins.Array.Length, gradsRef, gradsLength, retain_graph, create_graph, allow_unused, results.Allocator);
                 CheckForErrors();
                 return results.Array.Select(x => new Tensor(x)).ToList();
             }

@@ -35,7 +35,7 @@ namespace TorchSharp
                     long[] ptrArray;
 
                     using (var pa = new PinnedArray<long>()) {
-                        THSJIT_TensorType_sizes(handle, pa.CreateArray);
+                        THSJIT_TensorType_sizes(handle, pa.Allocator);
                         CheckForErrors();
                         ptrArray = pa.Array;
                     }

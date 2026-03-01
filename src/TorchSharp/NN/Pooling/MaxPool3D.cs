@@ -150,7 +150,7 @@ namespace TorchSharp
                         unsafe {
                             fixed (long* pkernel_size = kernel_size, pstrides = strides, ppadding = padding, pdilation = dilation) {
                                 THSTensor_max_pool3d_with_indices(input.Handle,
-                                    pa.CreateArray,
+                                    pa.Allocator,
                                     (IntPtr)pkernel_size, kernel_size.Length,
                                     (IntPtr)pstrides, strides.Length,
                                     (IntPtr)ppadding, padding.Length,

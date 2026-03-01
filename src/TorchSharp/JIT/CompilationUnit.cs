@@ -71,7 +71,7 @@ namespace TorchSharp
 
                         var allocated = ntosArray.Count;
 
-                        THSJIT_CompilationUnit_Invoke(handle, name, tRefsHandle, count, ntosArray.CreateArray, out typeCode, allocated);
+                        THSJIT_CompilationUnit_Invoke(handle, name, tRefsHandle, count, ntosArray.Allocator, out typeCode, allocated);
                         torch.CheckForErrors();
                         ptrArray = ntosArray.ToToSArray(allocated);
 

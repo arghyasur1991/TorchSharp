@@ -73,7 +73,7 @@ namespace TorchSharp
 
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
 
-                THSTensor_broadcast_tensors(tensorsRef, tensors.Length, pa.CreateArray);
+                THSTensor_broadcast_tensors(tensorsRef, tensors.Length, pa.Allocator);
                 CheckForErrors();
                 ptrArray = pa.Array;
             }
@@ -513,7 +513,7 @@ namespace TorchSharp
 
             using (var parray = new PinnedArray<IntPtr>()) {
                 IntPtr tensorsRef = parray.CreateArray(tensors.Select(p => p.Handle).ToArray());
-                _ = THSTensor_meshgrid(tensorsRef, parray.Array.Length, indexing, parray.CreateArray);
+                _ = THSTensor_meshgrid(tensorsRef, parray.Array.Length, indexing, parray.Allocator);
                 CheckForErrors();
                 ptrArray = parray.Array;
             }

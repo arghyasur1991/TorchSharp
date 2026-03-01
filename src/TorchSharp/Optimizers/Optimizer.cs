@@ -140,7 +140,7 @@ namespace TorchSharp
                     IntPtr[] ptrArray;
 
                     using (var pa = new PinnedArray<IntPtr>()) {
-                        THSNN_Optimizer_getParameters(handle, pa.CreateArray);
+                        THSNN_Optimizer_getParameters(handle, pa.Allocator);
                         torch.CheckForErrors();
                         ptrArray = pa.Array;
                     }

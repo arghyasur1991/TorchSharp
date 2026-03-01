@@ -26,7 +26,7 @@ namespace TorchSharp
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSJIT_Module_named_parameters(handle, pa.CreateArray, sa.CreateArray);
+                    THSJIT_Module_named_parameters(handle, pa.Allocator, sa.Allocator);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
@@ -38,7 +38,7 @@ namespace TorchSharp
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSJIT_Module_named_buffers(handle, pa.CreateArray, sa.CreateArray);
+                    THSJIT_Module_named_buffers(handle, pa.Allocator, sa.Allocator);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
@@ -50,7 +50,7 @@ namespace TorchSharp
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSJIT_Module_named_attributes(handle, recurse, pa.CreateArray, sa.CreateArray);
+                    THSJIT_Module_named_attributes(handle, recurse, pa.Allocator, sa.Allocator);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
@@ -72,7 +72,7 @@ namespace TorchSharp
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSJIT_Module_named_modules(handle, pa.CreateArray, sa.CreateArray);
+                    THSJIT_Module_named_modules(handle, pa.Allocator, sa.Allocator);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
@@ -88,7 +88,7 @@ namespace TorchSharp
                 {
                     using var pa = new PinnedArray<IntPtr>();
                     using var sa = new PinnedArray<IntPtr>();
-                    THSJIT_Module_named_children(handle, pa.CreateArray, sa.CreateArray);
+                    THSJIT_Module_named_children(handle, pa.Allocator, sa.Allocator);
                     CheckForErrors();
                     var ptrArray = pa.Array;
                     var strArray = sa.Array;
@@ -294,7 +294,7 @@ namespace TorchSharp
 
                         var allocated = ntosArray.Count;
 
-                        THSJIT_Module_forward(handle, tRefsHandle, count, ntosArray.CreateArray, out typeCode, allocated);
+                        THSJIT_Module_forward(handle, tRefsHandle, count, ntosArray.Allocator, out typeCode, allocated);
                         torch.CheckForErrors();
                         ptrArray = ntosArray.ToToSArray(allocated);
 
@@ -372,7 +372,7 @@ namespace TorchSharp
 
                         var allocated = ntosArray.Count;
 
-                        THSJIT_Module_invoke(handle, name, tRefsHandle, count, ntosArray.CreateArray, out typeCode, allocated);
+                        THSJIT_Module_invoke(handle, name, tRefsHandle, count, ntosArray.Allocator, out typeCode, allocated);
                         torch.CheckForErrors();
                         ptrArray = ntosArray.ToToSArray(allocated);
 

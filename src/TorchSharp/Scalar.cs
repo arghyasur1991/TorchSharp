@@ -376,7 +376,7 @@ namespace TorchSharp
             float[] floatArray;
 
             using (var pa = new PinnedArray<float>()) {
-                THSTorch_scalar_to_complex32(value.Handle, pa.CreateArray);
+                THSTorch_scalar_to_complex32(value.Handle, pa.Allocator);
                 torch.CheckForErrors();
                 floatArray = pa.Array;
             }
@@ -393,7 +393,7 @@ namespace TorchSharp
             double[] floatArray;
 
             using (var pa = new PinnedArray<double>()) {
-                THSTorch_scalar_to_complex64(value.Handle, pa.CreateArray);
+                THSTorch_scalar_to_complex64(value.Handle, pa.Allocator);
                 torch.CheckForErrors();
                 floatArray = pa.Array;
             }

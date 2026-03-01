@@ -954,7 +954,7 @@ namespace TorchSharp
                 long[] ptrArray;
 
                 using (var pa = new PinnedArray<long>()) {
-                    NativeMethods.THSTensor_sizes(Handle, pa.CreateArray);
+                    NativeMethods.THSTensor_sizes(Handle, pa.Allocator);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -1004,7 +1004,7 @@ namespace TorchSharp
                     }
 
                     using var sa = new PinnedArray<IntPtr>();
-                    NativeMethods.THSTensor_names(Handle, sa.CreateArray);
+                    NativeMethods.THSTensor_names(Handle, sa.Allocator);
                     CheckForErrors();
                     var strArray = sa.Array;
 
@@ -1235,7 +1235,7 @@ namespace TorchSharp
                 long[] ptrArray;
 
                 using (var pa = new PinnedArray<long>()) {
-                    NativeMethods.THSTensor_strides(Handle, pa.CreateArray);
+                    NativeMethods.THSTensor_strides(Handle, pa.Allocator);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -3791,7 +3791,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_topk(Handle, pa.CreateArray, k, dim, largest, sorted);
+                    NativeMethods.THSTensor_topk(Handle, pa.Allocator, k, dim, largest, sorted);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -3810,7 +3810,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_unbind(Handle, pa.CreateArray, dimension);
+                    NativeMethods.THSTensor_unbind(Handle, pa.Allocator, dimension);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -3842,7 +3842,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_split_with_size(Handle, pa.CreateArray, size, dim);
+                    NativeMethods.THSTensor_split_with_size(Handle, pa.Allocator, size, dim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -3863,7 +3863,7 @@ namespace TorchSharp
                 using (var pa = new PinnedArray<IntPtr>()) {
                     unsafe {
                         fixed (long* psizes = sizes) {
-                            NativeMethods.THSTensor_split_with_sizes(Handle, pa.CreateArray, (IntPtr)psizes, sizes.Length, dim);
+                            NativeMethods.THSTensor_split_with_sizes(Handle, pa.Allocator, (IntPtr)psizes, sizes.Length, dim);
                             CheckForErrors();
                         }
                     }
@@ -3905,7 +3905,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_tensor_split_with_size(Handle, pa.CreateArray, size, dim);
+                    NativeMethods.THSTensor_tensor_split_with_size(Handle, pa.Allocator, size, dim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -3926,7 +3926,7 @@ namespace TorchSharp
                 using (var pa = new PinnedArray<IntPtr>()) {
                     unsafe {
                         fixed (long* psizes = sizes) {
-                            NativeMethods.THSTensor_tensor_split_with_sizes(Handle, pa.CreateArray, (IntPtr)psizes, sizes.Length, dim);
+                            NativeMethods.THSTensor_tensor_split_with_sizes(Handle, pa.Allocator, (IntPtr)psizes, sizes.Length, dim);
                             CheckForErrors();
                         }
                     }
@@ -3942,7 +3942,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_tensor_split_with_tensor_sizes(Handle, pa.CreateArray, indices.Handle, dim);
+                    NativeMethods.THSTensor_tensor_split_with_tensor_sizes(Handle, pa.Allocator, indices.Handle, dim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -3961,7 +3961,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_vsplit_with_size(Handle, pa.CreateArray, size);
+                    NativeMethods.THSTensor_vsplit_with_size(Handle, pa.Allocator, size);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -3981,7 +3981,7 @@ namespace TorchSharp
                 using (var pa = new PinnedArray<IntPtr>()) {
                     unsafe {
                         fixed (long* psizes = sizes) {
-                            NativeMethods.THSTensor_vsplit_with_sizes(Handle, pa.CreateArray, (IntPtr)psizes, sizes.Length);
+                            NativeMethods.THSTensor_vsplit_with_sizes(Handle, pa.Allocator, (IntPtr)psizes, sizes.Length);
                             CheckForErrors();
                         }
                     }
@@ -4010,7 +4010,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_hsplit_with_size(Handle, pa.CreateArray, size);
+                    NativeMethods.THSTensor_hsplit_with_size(Handle, pa.Allocator, size);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -4030,7 +4030,7 @@ namespace TorchSharp
                 using (var pa = new PinnedArray<IntPtr>()) {
                     unsafe {
                         fixed (long* psizes = sizes) {
-                            NativeMethods.THSTensor_hsplit_with_sizes(Handle, pa.CreateArray, (IntPtr)psizes, sizes.Length);
+                            NativeMethods.THSTensor_hsplit_with_sizes(Handle, pa.Allocator, (IntPtr)psizes, sizes.Length);
                             CheckForErrors();
                         }
                     }
@@ -4058,7 +4058,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_dsplit_with_size(Handle, pa.CreateArray, size);
+                    NativeMethods.THSTensor_dsplit_with_size(Handle, pa.Allocator, size);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -4098,7 +4098,7 @@ namespace TorchSharp
                 using (var pa = new PinnedArray<IntPtr>()) {
                     unsafe {
                         fixed (long* psizes = sizes) {
-                            NativeMethods.THSTensor_dsplit_with_sizes(Handle, pa.CreateArray, (IntPtr)psizes, sizes.Length);
+                            NativeMethods.THSTensor_dsplit_with_sizes(Handle, pa.Allocator, (IntPtr)psizes, sizes.Length);
                             CheckForErrors();
                         }
                     }
@@ -4126,7 +4126,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_chunk(Handle, pa.CreateArray, chunks, dim);
+                    NativeMethods.THSTensor_chunk(Handle, pa.Allocator, chunks, dim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -4210,7 +4210,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_max_along_dimension(Handle, pa.CreateArray, dim, keepdim);
+                    NativeMethods.THSTensor_max_along_dimension(Handle, pa.Allocator, dim, keepdim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -4271,7 +4271,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_mode(Handle, pa.CreateArray, dim, keepdim);
+                    NativeMethods.THSTensor_mode(Handle, pa.Allocator, dim, keepdim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -4374,7 +4374,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    NativeMethods.THSTensor_min_along_dimension(Handle, pa.CreateArray, dim, keepdim);
+                    NativeMethods.THSTensor_min_along_dimension(Handle, pa.Allocator, dim, keepdim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }

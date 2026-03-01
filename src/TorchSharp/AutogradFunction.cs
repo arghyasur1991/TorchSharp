@@ -171,7 +171,7 @@ namespace TorchSharp
                     var dirtyPtr = diffArr.CreateArrayWithSize(_context.DirtyTensors.Select(v => v.Handle).ToArray());
                     var outputPtr = outputArr.CreateArrayWithSize(outputs.Select(v => v.Handle).ToArray());
 
-                    THSAutograd_Function_wrapOutputs(varsPtr, diffsPtr, dirtyPtr, outputPtr, isExecutable ? handle : new(), resultsArr.CreateArray);
+                    THSAutograd_Function_wrapOutputs(varsPtr, diffsPtr, dirtyPtr, outputPtr, isExecutable ? handle : new(), resultsArr.Allocator);
                     CheckForErrors();
 
                     var ret = resultsArr.Array.Select(x => new Tensor(x)).ToList();

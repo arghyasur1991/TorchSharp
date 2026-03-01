@@ -595,7 +595,7 @@ namespace TorchSharp
             IntPtr[] ptrArray;
 
             using (var pa = new PinnedArray<IntPtr>()) {
-                THSTensor_where_list(condition.Handle, pa.CreateArray);
+                THSTensor_where_list(condition.Handle, pa.Allocator);
                 CheckForErrors();
                 ptrArray = pa.Array;
             }

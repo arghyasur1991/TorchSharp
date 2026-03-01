@@ -609,7 +609,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_cummax(Handle, pa.CreateArray, dim);
+                    THSTensor_cummax(Handle, pa.Allocator, dim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
@@ -627,7 +627,7 @@ namespace TorchSharp
                 IntPtr[] ptrArray;
 
                 using (var pa = new PinnedArray<IntPtr>()) {
-                    THSTensor_cummin(Handle, pa.CreateArray, dim);
+                    THSTensor_cummin(Handle, pa.Allocator, dim);
                     CheckForErrors();
                     ptrArray = pa.Array;
                 }
