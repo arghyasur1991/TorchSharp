@@ -113,10 +113,6 @@ namespace TorchSharp
 
                 ~Module()
                 {
-                    if (_forwardSlotId >= 0) {
-                        IL2CPPBridge.ReleaseFwdSlot(_forwardSlotId);
-                        _forwardSlotId = -1;
-                    }
                     Dispose(false);
                 }
 
